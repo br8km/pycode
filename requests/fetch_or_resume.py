@@ -32,7 +32,7 @@ def fetch_or_resume(url, to_file, max_retry=10, wait_sec=5, min_mb=1024):
                 if pos>=total_size:
                     break
             headers["Range"] = f"bytes={pos}-"
-            with self.requests.get(url, proxies=self.pd, stream=True, timeout=60) as r:
+            with self.requests.get(url, stream=True, timeout=60) as r:
                 if not r: break
 
                 this_size = int(r.headers.get("content-length"))
