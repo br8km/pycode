@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
+# Reference:
 # https://stackoverflow.com/questions/51812449/how-to-resume-file-download-in-python-3-5
 #
 import os, sys, time, datetime, re, json, random, base64, arrow
@@ -9,24 +10,29 @@ import requests, requests.utils, pickle
 requests.packages.urllib3.disable_warnings()
 
 
-def fetch_or_resume(url, to_file, max_retry=10, wait_sec=5, min_mb=1024):
+def fetch_or_resume(url, to_file, max_retry=10, wait_sec=5, min_MB=1024):
     try:
-        pos = 0
+        
         r = requests.head(url, stream=True, timeout=60)
+        if not "Accept-Ranges" in r.headers:
+            print("Not support Range header for resume download!"); return False
+        else:
+            ar = r.headers["Accept-Ranges"]
+            if not ar or not "bytes" in ar:
+                print("Not support Range header for resume download!"); return False
+
         total_size = int(r.headers.get("content-length"))
-        if total_size<1024*1024*min_mb:
-            print(f"[{total_size}]total_size error!")
-            return False
+        if total_size<1024*1024*min_MB:
+            print(f"[{total_size}]total_size error!"); return False
+
     except Exception as e:
-        print(e)
-        print(f"fetch_or_resume error @ except")
-        return False
+        print(e); return False
 
     for retry in range(max_retry):
         time.sleep(wait_sec)
-
+        pos = 0
+        headers = {}
         with open(to_file, "ab") as f:
-            headers = {}
             pos = f.tell()
             if pos:
                 if pos>=total_size:
@@ -48,3 +54,8 @@ def fetch_or_resume(url, to_file, max_retry=10, wait_sec=5, min_mb=1024):
     else:
         print(f"Download SUCCESS: [{retry}]retry -[{pos}]pos = [{total_size}]total")
         return True
+
+
+
+
+
