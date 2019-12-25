@@ -1,2 +1,2 @@
 # pycode
-General Python Code
+General Python Code Snippets
