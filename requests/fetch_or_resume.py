@@ -4,6 +4,10 @@
 # Reference:
 # https://stackoverflow.com/questions/51812449/how-to-resume-file-download-in-python-3-5
 #
+# TODO:
+# https://stackoverflow.com/questions/58571343/downloading-a-large-file-in-parts-using-multiple-parallel-threads
+# https://stackoverflow.com/questions/33703730/adding-progress-feedback-in-grequests-task
+#
 import os, sys, time, datetime, re, json, random, base64, arrow
 
 import requests, requests.utils, pickle
